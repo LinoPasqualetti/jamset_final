@@ -1,0 +1,59 @@
+name: jamset_final
+description: "Jamset App"
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core & UI
+  cupertino_icons: ^1.0.6
+  data_table_2: ^2.5.10
+
+  # Funzionalità principali
+  csv: ^6.0.0
+  http: ^1.2.1
+  path: ^1.9.0
+  path_provider: ^2.1.3
+  permission_handler: ^11.3.1
+  shared_preferences: ^2.2.3
+  speech_to_text: ^7.3.0
+  file_selector: ^1.1.0
+
+  # Database
+  sqflite: ^2.3.3
+  sqflite_common_ffi: ^2.3.3
+  sqlite3_flutter_libs: ^0.5.22
+
+  # Apertura file e URL
+  url_launcher: ^6.3.0
+
+  # Visualizzatore PDF integrato (per Android)
+  flutter_pdfview: ^1.3.2
+
+  # NUOVE DIPENDENZE per la gestione file migliorata
+  cross_file: ^0.3.3
+  flutter_tts: ^3.8.3  # Aggiungi questa linea
+
+  # RIMOSSE dipendenze problematiche:
+  # file_picker: any
+  # sqflite_common_ffi_web: ^0.4.2+3
+  # open_filex: ^4.3.3
+  # open_file: ^3.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/databases/
