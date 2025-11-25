@@ -17,37 +17,191 @@ class MainScreen extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
+/////////// Bottoni rettangolari
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // BOTTONI COMPLETAMENTE TRASPARENTI
-              _buildTransparentButton(Icons.visibility, "CSW Viewer", () {
-                _navigateToCSWViewer(context);
-              }),
-              const SizedBox(height: 25),
+// BOTTONE 1 - CSW VIEWER
+              Container(
+                width: 280, // Larghezza fissa
+                height: 40,  // Altezza fissa
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _navigateToCSWViewer(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[700], // Colore di sfondo
+                    foregroundColor: Colors.white,     // Colore testo/icona
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0), // Bordi stondati
+                    ),
+                    elevation: 6, // Ombra
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.visibility, size: 32), // Icona
+                      const SizedBox(width: 16),
+                      Text(
+                        "CSW Viewer",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, // Colore testo esplicito
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-              _buildTransparentButton(Icons.search, "Query DB", () {
-                _navigateToQueryDB(context);
-              }),
-              const SizedBox(height: 25),
+// BOTTONE 2 - QUERY DB
+              Container(
+                width: 280,
+                height: 40,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _navigateToQueryDB(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green[700],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    elevation: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.search, size: 32),
+                      const SizedBox(width: 16),
+                      Text(
+                        "Query DB",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-              _buildTransparentButton(Icons.settings, "Configurazione", () {
-                _navigateToSystemConfig(context);
-              }),
-              const SizedBox(height: 25),
+// BOTTONE 3 - CONFIGURAZIONE
+              Container(
+                width: 280,
+                height: 40,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _navigateToSystemConfig(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.orange[700],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    elevation: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.settings, size: 32),
+                      const SizedBox(width: 16),
+                      Text(
+                        "Configurazione",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-              _buildTransparentButton(Icons.tune, "Gestione Variazioni", () {
-                _navigateToGestioneVariazioni(context);
-              }),
-              const SizedBox(height: 25),
+// BOTTONE 4 - GESTIONE VARIAZIONI
+              Container(
+                width: 280,
+                height: 40,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _navigateToGestioneVariazioni(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple[700],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    elevation: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.tune, size: 32),
+                      const SizedBox(width: 16),
+                      Text(
+                        "Gestione Variazioni",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-              _buildTransparentButton(Icons.rocket_launch, "Accesso rapido", () {
-                _navigateToAccessoRapido(context);
-              }),
+// BOTTONE 5 - ACCESSO RAPIDO
+              Container(
+                width: 280,
+                height: 40,
+                margin: const EdgeInsets.symmetric(vertical: 8),
+                child: ElevatedButton(
+                  onPressed: () {
+                    _navigateToAccessoRapido(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red[700],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    elevation: 6,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Icon(Icons.rocket_launch, size: 32),
+                      const SizedBox(width: 16),
+                      Text(
+                        "Accesso rapido",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
         ),
+//////////
+
+
       ),
     );
   }
