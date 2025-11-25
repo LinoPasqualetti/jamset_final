@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'system_config_screen.dart';
 import 'search_screen.dart';
 import 'gestione_variazioni_screen.dart'; // AGGIUNGI QUESTA RIGA
+import 'package:jamset_final/screens/csv_viewer_screen.dart'; // ✅ CORRETTO
+
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -19,184 +21,188 @@ class MainScreen extends StatelessWidget {
         ),
 /////////// Bottoni rettangolari
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-// BOTTONE 1 - CSW VIEWER
-              Container(
-                width: 280, // Larghezza fissa
-                height: 40,  // Altezza fissa
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _navigateToCSWViewer(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[700], // Colore di sfondo
-                    foregroundColor: Colors.white,     // Colore testo/icona
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0), // Bordi stondati
-                    ),
-                    elevation: 6, // Ombra
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.visibility, size: 32), // Icona
-                      const SizedBox(width: 16),
-                      Text(
-                        "CSW Viewer",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white, // Colore testo esplicito
-                        ),
+          child: Container(
+            alignment: Alignment.centerRight, // Allineamento a destra
+            padding: const EdgeInsets.only(right: 20), // Padding dal bordo destro
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end, // Allinea colonna a destra
+              children: [
+// BOTTONE 1 - CSV VIEWER
+                Container(
+                  width: 280,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _navigateToCsvViewer(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue[700],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ],
+                      elevation: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.table_chart, size: 32),
+                        const SizedBox(width: 16),
+                        Text(
+                          "CSV Viewer", // ✅ CORRETTO - CSV
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-
 // BOTTONE 2 - QUERY DB
-              Container(
-                width: 280,
-                height: 40,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _navigateToQueryDB(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green[700],
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    elevation: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.search, size: 32),
-                      const SizedBox(width: 16),
-                      Text(
-                        "Query DB",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                Container(
+                  width: 280,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _navigateToQueryDB(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green[700],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ],
+                      elevation: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.search, size: 32),
+                        const SizedBox(width: 16),
+                        Text(
+                          "Query DB",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
 // BOTTONE 3 - CONFIGURAZIONE
-              Container(
-                width: 280,
-                height: 40,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _navigateToSystemConfig(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[700],
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    elevation: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.settings, size: 32),
-                      const SizedBox(width: 16),
-                      Text(
-                        "Configurazione",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                Container(
+                  width: 280,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _navigateToSystemConfig(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange[700],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ],
+                      elevation: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.settings, size: 32),
+                        const SizedBox(width: 16),
+                        Text(
+                          "Configurazione",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
 // BOTTONE 4 - GESTIONE VARIAZIONI
-              Container(
-                width: 280,
-                height: 40,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _navigateToGestioneVariazioni(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple[700],
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    elevation: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.tune, size: 32),
-                      const SizedBox(width: 16),
-                      Text(
-                        "Gestione Variazioni",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                Container(
+                  width: 280,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _navigateToGestioneVariazioni(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.purple[700],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ],
+                      elevation: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.tune, size: 32),
+                        const SizedBox(width: 16),
+                        Text(
+                          "Gestione Variazioni",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
 // BOTTONE 5 - ACCESSO RAPIDO
-              Container(
-                width: 280,
-                height: 40,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ElevatedButton(
-                  onPressed: () {
-                    _navigateToAccessoRapido(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red[700],
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.0),
-                    ),
-                    elevation: 6,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.rocket_launch, size: 32),
-                      const SizedBox(width: 16),
-                      Text(
-                        "Accesso rapido",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                Container(
+                  width: 280,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _navigateToAccessoRapido(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red[700],
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16.0),
                       ),
-                    ],
+                      elevation: 6,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Icon(Icons.rocket_launch, size: 32),
+                        const SizedBox(width: 16),
+                        Text(
+                          "Accesso rapido",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
 //////////
@@ -228,9 +234,13 @@ class MainScreen extends StatelessWidget {
     );
   }
 
-  void _navigateToCSWViewer(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("CSW Viewer - Da implementare")),
+// In _MainScreenState class
+  void _navigateToCsvViewer(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const CsvViewerScreen(), // ✅ CORRETTO
+      ),
     );
   }
 
