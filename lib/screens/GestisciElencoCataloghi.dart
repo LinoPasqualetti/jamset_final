@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:jamset_new/main.dart'; // <-- IMPORT CORRETTO
+import 'package:jamset_final/main.dart'; // <-- IMPORT CORRETTO
 import 'VariaCatalogo.dart';
 
 class GestisciElencoCataloghi extends StatefulWidget {
@@ -115,4 +115,3 @@ class _GestisciElencoCataloghiState extends State<GestisciElencoCataloghi> {
     );
   }
 }
-

@@ -1,6 +1,6 @@
-// lib/screens/search_screen.dart - VERSIONE AVANZATA COMPLETA
+// lib/screens/search_screen.dart - FIXED RENDERFLEX OVERFLOW
 import 'package:flutter/material.dart';
-import 'package:jamset_final/main.dart' as app_main; // MODIFICATO: jamset_final
+import 'package:jamset_final/main.dart' as app_main;
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:io' show File, Platform, Process;
 
@@ -136,31 +136,27 @@ class _SearchScreenState extends State<SearchScreen> {
     final pdfRelativePath = spartito['PercResto']?.toString() ?? '';
     final volume = spartito['volume']?.toString() ?? '';
 
-    // Se manca qualche componente, restituisci vuoto
     if (basePath.isEmpty || pdfRelativePath.isEmpty || volume.isEmpty) {
       return '';
     }
 
-    // Normalizza il percorso base
-    String normalizedBase = basePath.replaceAll('/', '\\');
-    if (!normalizedBase.endsWith('\\')) {
-      normalizedBase += '\\';
+    // Normalizza i separatori per la piattaforma corrente
+    final sep = Platform.pathSeparator;
+    String normalizedBase = basePath.replaceAll(RegExp(r'[\\/]'), sep);
+    if (!normalizedBase.endsWith(sep)) {
+      normalizedBase += sep;
     }
 
-    // Normalizza il percorso relativo
-    String normalizedRelative = pdfRelativePath.replaceAll('/', '\\');
-    if (normalizedRelative.startsWith('\\')) {
+    String normalizedRelative = pdfRelativePath.replaceAll(RegExp(r'[\\/]'), sep);
+    if (normalizedRelative.startsWith(sep)) {
       normalizedRelative = normalizedRelative.substring(1);
     }
-    if (!normalizedRelative.endsWith('\\')) {
-      normalizedRelative += '\\';
+    if (!normalizedRelative.endsWith(sep)) {
+      normalizedRelative += sep;
     }
 
-    // Costruisci il percorso completo: base + relativo + volume
     String fullPath = '$normalizedBase$normalizedRelative$volume';
-
-    // Rimuovi doppi separatori
-    fullPath = fullPath.replaceAll('\\\\', '\\');
+    fullPath = fullPath.replaceAll('$sep$sep', sep);
 
     return fullPath;
   }
@@ -189,7 +185,6 @@ class _SearchScreenState extends State<SearchScreen> {
         return;
       }
 
-      // Apri il PDF alla pagina specifica se indicata
       final numPag = spartito['NumPag']?.toString();
       await _launchPdf(fullPath, numPag);
 
@@ -210,22 +205,14 @@ class _SearchScreenState extends State<SearchScreen> {
         throw Exception('File non trovato: $filePath');
       }
 
-      // Se non c'è numero pagina, apri normalmente
       if (pageNumber == null || pageNumber.isEmpty) {
         final uri = Uri.file(filePath);
         if (await canLaunchUrl(uri)) {
           await launchUrl(uri);
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ PDF aperto'),
-              backgroundColor: Colors.green,
-            ),
-          );
           return;
         }
       }
 
-      // STRATEGIA 1: Adobe Acrobat Reader (più comune)
       if (Platform.isWindows) {
         final acrobatPaths = [
           r'C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe',
@@ -235,95 +222,16 @@ class _SearchScreenState extends State<SearchScreen> {
         ];
 
         for (final path in acrobatPaths) {
-          try {
-            final acrobatFile = File(path);
-            if (await acrobatFile.exists()) {
-              await Process.run(path, ['/A', 'page=$pageNumber', filePath]);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('✅ PDF aperto con Adobe Reader alla pagina $pageNumber'),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              return;
-            }
-          } catch (e) {
-            print('Adobe Reader non disponibile: $e');
-          }
-        }
-      }
-
-      // STRATEGIA 2: Usa il percorso dal config globale (se disponibile)
-      if (Platform.isWindows && app_main.appSystemConfig['pdfViewerPath'] != null) {
-        try {
-          final viewerPath = app_main.appSystemConfig['pdfViewerPath']!;
-          final viewerFile = File(viewerPath);
-          if (await viewerFile.exists()) {
-            await Process.run(viewerPath, ['/A', 'page=$pageNumber', filePath]);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('✅ PDF aperto con visualizzatore configurato alla pagina $pageNumber'),
-                backgroundColor: Colors.green,
-              ),
-            );
+          if (await File(path).exists()) {
+            await Process.run(path, ['/A', 'page=$pageNumber', filePath]);
             return;
           }
-        } catch (e) {
-          print('Visualizzatore configurato non disponibile: $e');
         }
       }
 
-      // STRATEGIA 3: Prova con il visualizzatore predefinito di sistema
       final uri = Uri.file(filePath);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('📄 PDF aperto con visualizzatore predefinito'),
-                if (pageNumber != null && pageNumber.isNotEmpty)
-                  Text(
-                    '📍 Vai manualmente alla pagina: $pageNumber',
-                    style: const TextStyle(
-                      color: Colors.amber,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-        return;
-      }
-
-      // STRATEGIA 4: Fallback per Windows
-      if (Platform.isWindows) {
-        await Process.run('cmd', ['/c', 'start', '', '"$filePath"']);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('📄 PDF aperto'),
-                if (pageNumber != null && pageNumber.isNotEmpty)
-                  Text(
-                    '📍 Vai manualmente alla pagina: $pageNumber',
-                    style: const TextStyle(
-                      color: Colors.amber,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              ],
-            ),
-            backgroundColor: Colors.green,
-          ),
-        );
       } else {
         throw Exception('Impossibile aprire il file');
       }
@@ -333,7 +241,6 @@ class _SearchScreenState extends State<SearchScreen> {
         SnackBar(
           content: Text('❌ Errore apertura PDF: $e'),
           backgroundColor: Colors.red,
-          duration: const Duration(seconds: 5),
         ),
       );
     }
@@ -353,133 +260,134 @@ class _SearchScreenState extends State<SearchScreen> {
             ),
         ],
       ),
-      body: Column(
-        children: [
-          // BARRA RICERCA
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'Cerca spartiti...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(icon: const Icon(Icons.clear), onPressed: _clearSearch)
-                    : null,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-              onChanged: (value) {
-                if (value.length >= 2) {
-                  _performSearch(value);
-                } else if (value.isEmpty) {
-                  _clearSearch();
-                }
-              },
-            ),
-          ),
-
-          // FILTRI
-          Card(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.filter_list),
-                      const SizedBox(width: 8),
-                      const Text('Filtri:', style: TextStyle(fontWeight: FontWeight.bold)),
-                      const Spacer(),
-                      TextButton(onPressed: _resetFilters, child: const Text('Reset')),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      SizedBox(
-                        width: 180,
-                        child: TextField(
-                          controller: _strumentoController,
-                          decoration: const InputDecoration(
-                            labelText: 'Strumento',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 180,
-                        child: TextField(
-                          controller: _volumeController,
-                          decoration: const InputDecoration(
-                            labelText: 'Volume',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 180,
-                        child: TextField(
-                          controller: _provenienzaController,
-                          decoration: const InputDecoration(
-                            labelText: 'Provenienza',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                      // FILTRO TIPOMULTI
-                      SizedBox(
-                        width: 120,
-                        child: TextField(
-                          controller: _tipoMultiController,
-                          decoration: const InputDecoration(
-                            labelText: 'TipoMulti',
-                            hintText: 'es. B, PDF',
-                            border: OutlineInputBorder(),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // BARRA RICERCA
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  labelText: 'Cerca spartiti...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: _searchController.text.isNotEmpty
+                      ? IconButton(icon: const Icon(Icons.clear), onPressed: _clearSearch)
+                      : null,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                onChanged: (value) {
+                  if (value.length >= 2) {
+                    _performSearch(value);
+                  } else if (value.isEmpty) {
+                    _clearSearch();
+                  }
+                },
               ),
             ),
-          ),
 
-          // ERRORI
-          if (_searchError.isNotEmpty)
+            // FILTRI
+            Card(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Icon(Icons.filter_list),
+                        const SizedBox(width: 8),
+                        const Text('Filtri:', style: TextStyle(fontWeight: FontWeight.bold)),
+                        const Spacer(),
+                        TextButton(onPressed: _resetFilters, child: const Text('Reset')),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        SizedBox(
+                          width: 180,
+                          child: TextField(
+                            controller: _strumentoController,
+                            decoration: const InputDecoration(
+                              labelText: 'Strumento',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 180,
+                          child: TextField(
+                            controller: _volumeController,
+                            decoration: const InputDecoration(
+                              labelText: 'Volume',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 180,
+                          child: TextField(
+                            controller: _provenienzaController,
+                            decoration: const InputDecoration(
+                              labelText: 'Provenienza',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 120,
+                          child: TextField(
+                            controller: _tipoMultiController,
+                            decoration: const InputDecoration(
+                              labelText: 'TipoMulti',
+                              hintText: 'es. B, PDF',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // ERRORI
+            if (_searchError.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.all(8),
+                color: Colors.red[50],
+                child: Row(
+                  children: [
+                    const Icon(Icons.error, color: Colors.red),
+                    const SizedBox(width: 8),
+                    Expanded(child: Text(_searchError)),
+                  ],
+                ),
+              ),
+
+            // INFO
             Container(
-              padding: const EdgeInsets.all(8),
-              color: Colors.red[50],
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              color: Colors.blueGrey[50],
               child: Row(
                 children: [
-                  const Icon(Icons.error, color: Colors.red),
+                  const Text('Risultati:'),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(_searchError)),
+                  Text(_searchResults.length.toString()),
+                  const Spacer(),
+                  const Text('Ordinato per: Titolo → Strumento'),
                 ],
               ),
             ),
 
-          // INFO
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            color: Colors.blueGrey[50],
-            child: Row(
-              children: [
-                const Text('Risultati:'),
-                const SizedBox(width: 8),
-                Text(_searchResults.length.toString()),
-                const Spacer(),
-                const Text('Ordinato per: Titolo → Strumento'),
-              ],
-            ),
-          ),
-
-          // RISULTATI
-          Expanded(child: _buildResults()),
-        ],
+            // RISULTATI
+            _buildResults(),
+          ],
+        ),
       ),
     );
   }
@@ -513,7 +421,6 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
-    // Raggruppa per titolo
     Map<String, List<Map<String, dynamic>>> groups = {};
     for (var spartito in _searchResults) {
       String titolo = spartito['titolo']?.toString() ?? 'Senza titolo';
@@ -524,6 +431,8 @@ class _SearchScreenState extends State<SearchScreen> {
     List<String> sortedTitles = groups.keys.toList()..sort();
 
     return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: sortedTitles.length,
       itemBuilder: (context, index) {
         String titolo = sortedTitles[index];
@@ -561,10 +470,8 @@ class _SearchScreenState extends State<SearchScreen> {
       title: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // PRIMA RIGA: Strumento + Numero pagina + Percorso (BOX SCROLLABILE)
           Row(
             children: [
-              // Strumento (verde)
               Text(
                 spartito['strumento']?.toString() ?? 'Senza strumento',
                 style: const TextStyle(
@@ -574,7 +481,6 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
 
-              // Numero pagina (box blu) - solo se presente
               if (numPag.isNotEmpty) ...[
                 const SizedBox(width: 8),
                 Container(
@@ -597,7 +503,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
               const Spacer(),
 
-              // PERCORSO IN BOX SCROLLABILE E SELEZIONABILE
               Container(
                 width: 250,
                 height: 24,
@@ -637,7 +542,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
           const SizedBox(height: 4),
 
-          // SECONDA RIGA: Volume + Archivio + Autore + TipoDoc
           Wrap(
             spacing: 8,
             children: [
